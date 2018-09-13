@@ -1,3 +1,6 @@
+__author__ = 'naina'
+
+from flask import Flask, render_template, request
 import sys
 from rwslib import RWSConnection
 from rwslib.builders import *
@@ -12,11 +15,16 @@ from time import strftime
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 
+
 project_name = "Mediflex"
 enviro_name = "DEV"
 location_oid = "BWH0001"
 study_name = project_name + " " + enviro_name
 ET.register_namespace("", "http://www.cdisc.org/ns/odm/v1.3")
+
+def initialize_medidata():
+
+    ET.register_namespace("", "http://www.cdisc.org/ns/odm/v1.3")
 
 def testConnection():
     print rws.send_request(VersionRequest())
@@ -39,7 +47,8 @@ def prettify(elem):
     """
     rough_string = tostring(elem, 'utf-8', method="xml")
     reparsed = minidom.parseString(rough_string)
-    print reparsed.toprettyxml(indent=" ")
+    #print reparsed.toprettyxml(indent=" ")
+    return reparsed.toprettyxml(indent=" ")
 
 def printDataset():
     clinical_xml = rws.send_request(StudyDatasetRequest('Mediflex', 'DEV')).encode('utf-8').strip()
@@ -49,13 +58,30 @@ def printDataset():
     print "All Subjects Tree: \n", tree
     prettify(tree)
 
+def printPatient(pt_key):
+    pt_xml = rws.send_request(SubjectDatasetRequest(project_name, enviro_name, pt_key)).encode('utf-8').strip()
+    pt_xml = pt_xml[pt_xml.find('<'):]
+    tree = ET.fromstring(pt_xml)
+    items = tree.iter("ItemData")
+    return items
+    #return prettify(tree)
+
 def printSubjectData(pt_key):
     pt_xml = rws.send_request(SubjectDatasetRequest(project_name, enviro_name, pt_key)).encode('utf-8').strip()
     pt_xml =pt_xml[pt_xml.find('<'):]
-
+    #print pt_xml
+    #pt_xml = pt_xml.replace("http://www.cdisc.org/ns/odm/v1.3", "ODM")
     tree = ET.fromstring(pt_xml)
-    print "Patient Tree: \n", tree
-    prettify(tree)
+    print tree.tag
+    #print "Patient Tree: \n", tree
+    print tree.iter('ItemData')
+    for child in tree.iter('ItemData'):
+        print child.tag, child.attrib
+        # for key, val in child.attrib.items():
+            #print val
+    # print prettify(tree)
+    # return tree
+
 
 def printAllSubjects():
     subject_list = rws.send_request(StudySubjectsRequest(project_name, enviro_name))
@@ -121,7 +147,39 @@ def addNewSubject1():
     print "Addition Successful: ", resp.istransactionsuccessful
     print "Fields Changed: \n", str(resp)
 
-#def updateSubjectDiary(sub_key):
+def updateSubjectDiary(sub_id):
+
+    data = """<?xml version="1.0" encoding="utf-8" ?> <ODM xmlns="http://www.cdisc.org/ns/odm/v1.3" ODMVersion="1.3" FileType="Transactional" FileOID="Example-7" CreationDateTime="2008-01-01T00:00:00">
+ <ClinicalData StudyOID="Mediflex(Dev)" MetaDataVersionOID="1">
+   <SubjectData SubjectKey=\""""+sub_id +"""" TransactionType="Update">
+     <SiteRef LocationOID="BWH0001"/>
+     <StudyEventData StudyEventOID="VISIT01">
+       <FormData FormOID="FORM_PAIN_SI">
+         <ItemGroupData ItemGroupOID="FORM_PAIN_SI_LOG_LINE" ItemGroupRepeatKey="1">
+           <ItemData ItemOID="IT_DATE" Value="20 Sep 2001"/>
+           <ItemData ItemOID="IT_TIME" Value="12:00:00"/>
+           <ItemData ItemOID="IT_SEVERE" Value="50"/>
+           <ItemData ItemOID="IT_REC_ID" Value="12345678"/>
+         </ItemGroupData>
+       </FormData>
+     </StudyEventData>
+     <StudyEventData StudyEventOID="VISIT02">
+       <FormData FormOID="FORM_PAIN_SI">
+         <ItemGroupData ItemGroupOID="FORM_PAIN_SI_LOG_LINE" ItemGroupRepeatKey="1">
+           <ItemData ItemOID="IT_DATE" Value="45 Feb 2011"/>
+           <ItemData ItemOID="IT_TIME" Value="18:00:00"/>
+           <ItemData ItemOID="IT_SEVERE" Value="75"/>
+           <ItemData ItemOID="IT_REC_ID" Value="12345679"/>
+         </ItemGroupData>
+       </FormData>
+     </StudyEventData>
+   </SubjectData>
+ </ClinicalData>
+</ODM>"""
+    print data
+    resp = rws.send_request(PostDataRequest(data))
+    print "Addition Successful: ", resp.istransactionsuccessful
+    print "Fields Changed: \n", str(resp)
 
 def makeODM():
     print "make ODM: "
@@ -165,17 +223,29 @@ key = open('keypair_dir/vaccines_mauth.priv.key','r').read()
 
 rws = RWSConnection('https://innovate.mdsol.com', "nrao1","H4Vaccine!")
 
+#initialize_medidata()
 #testConnection()
 #printSubjectData("123")
 
 
 if len(sys.argv) > 1:
+    #updateSubjectDiary(sys.argv[1])
     printSubjectData(sys.argv[1])
     #removeSubject(sys.argv[1])
 #printAllSubjects()
-#makeODM()
-#addNewSubject("z", 003, "abc")
-#addNewSubject1()
-#printAllSubjects()
 
-#printDataset()
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/hello', methods=['POST'])
+def hello():
+    initialize_medidata()
+    first_name = request.form['first_name']
+    sub_xml = printPatient(first_name)
+    print sub_xml
+    #sub_xml = sub_xml.replace("\"", "\\""s")
+    return render_template('displaydiary.html', dates=sub_xml)
+    #return 'Hello have fun learning python <br/> <xmp> %s </xmp> <a href="/">Back Home</a>' % (str(sub_xml))
