@@ -61,7 +61,15 @@ def printDataset():
 def printPatient(pt_key):
     pt_xml = rws.send_request(SubjectDatasetRequest(project_name, enviro_name, pt_key)).encode('utf-8').strip()
     pt_xml = pt_xml[pt_xml.find('<'):]
+    pt_xml = pt_xml.replace("http://www.cdisc.org/ns/odm/v1.3", "")
     tree = ET.fromstring(pt_xml)
+    for child in tree.iter("ItemData"):
+        subj = child.get('ItemOID')
+        if '.' in subj:
+            subj = subj[subj.find('.')+1:]
+        if '_' in subj:
+            subj = subj[subj.rfind('_')+1 :]
+        child.set('ItemOID', subj)
     items = tree.iter("ItemData")
     return items
     #return prettify(tree)
@@ -70,17 +78,18 @@ def printSubjectData(pt_key):
     pt_xml = rws.send_request(SubjectDatasetRequest(project_name, enviro_name, pt_key)).encode('utf-8').strip()
     pt_xml =pt_xml[pt_xml.find('<'):]
     #print pt_xml
-    #pt_xml = pt_xml.replace("http://www.cdisc.org/ns/odm/v1.3", "ODM")
+    pt_xml = pt_xml.replace("http://www.cdisc.org/ns/odm/v1.3", "")
+
     tree = ET.fromstring(pt_xml)
     print tree.tag
     #print "Patient Tree: \n", tree
-    print tree.iter('ItemData')
+    #print tree.getroot().iter('ItemData')
     for child in tree.iter('ItemData'):
-        print child.tag, child.attrib
-        # for key, val in child.attrib.items():
-            #print val
-    # print prettify(tree)
-    # return tree
+        print child.attrib
+        for key, val in child.attrib.items():
+            print val
+    #print prettify(tree)
+    return tree
 
 
 def printAllSubjects():
@@ -247,5 +256,5 @@ def hello():
     sub_xml = printPatient(first_name)
     print sub_xml
     #sub_xml = sub_xml.replace("\"", "\\""s")
-    return render_template('displaydiary.html', dates=sub_xml)
+    return render_template('displaydiary.html', root=sub_xml)
     #return 'Hello have fun learning python <br/> <xmp> %s </xmp> <a href="/">Back Home</a>' % (str(sub_xml))
