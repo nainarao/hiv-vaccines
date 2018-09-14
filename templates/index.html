@@ -14,7 +14,25 @@
             This "diary" shall populate the diary on medidata<br>
             Enter in "abc" for subject key:<br>
             <form action="/hello" method="post">
-                subject key: <input type="text" name="first_name"/>
+                Subject Key: <input type="text" name="first_name"> <br />
+                 <p> Date Diary was logged: <input type="date" name="date"><br /> </p>
+                <p>Time diary was logged: <input type="time" name="time"><br /> </p>
+                <!-- <button type="button" onclick="document.getElementById('demo').innerHTML = Date()">
+                  Click me to display Date and Time.</button> -->
+                <p>How Severe is your pain: <input type="number" name="pain"></p>
+                <p>Was your pain expected?: <input type="number" name="expected"></p>
+                <p style="padding-left:1em">Which activities triggered your pain:</p>
+                <label style="padding-left:1em">
+                  <input type="checkbox" name="check" value="work"> Work
+                  <input type="checkbox" name="check" value="exercise"> exercise
+                  <input type="checkbox" name="check" value="walking"> Walking
+                  <input type="checkbox" name="check" value="sitting"> Sitting
+                  <input type="checkbox" name="check" value="steps"> Climbing Steps
+                  <input type="checkbox" name="check" value="none"> None of the Above
+              </label>
+              <br / >
+              <br / >
+
                 <input type="submit" name= "form" value="Submit" />
             </form>
         </p>
