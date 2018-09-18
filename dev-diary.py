@@ -14,6 +14,7 @@ from xml.dom import minidom
 from time import strftime
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring
+import time
 
 
 project_name = "Mediflex"
@@ -245,14 +246,36 @@ if len(sys.argv) > 1:
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+#background process happening without any refreshing
+@app.route('/background_process_test')
+def background_process_test():
+    print "Hello"
+    return "nothing"
+
+@app.route("/getTime", methods=['GET'])
+def getTime():
+    print("browser time: ", request.args.get("time"))
+    return "Done"
+
+@app.route('/getSubject', methods=['POST'])
+def getSubject():
+    initialize_medidata()
+    first_name = request.form['key']
+    sub_xml = printPatient(first_name)
+    print sub_xml
+    #sub_xml = sub_xml.replace("\"", "\\""s")
+    return render_template('displaydiary.html', root=sub_xml)
+    #return 'Hello have fun learning python <br/> <xmp> %s </xmp> <a href="/">Back Home</a>' % (str(sub_xml))
+
 @app.route('/hello', methods=['POST'])
 def hello():
     initialize_medidata()
-    first_name = request.form['first_name']
+    first_name = request.form['key']
     sub_xml = printPatient(first_name)
     print sub_xml
     #sub_xml = sub_xml.replace("\"", "\\""s")

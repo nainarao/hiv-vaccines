@@ -1,7 +1,10 @@
 <!DOCTYPE html>
+
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="static/style.css">
+        <script type="text/javascript" src="{{ url_for('static', filename='moment.min.js') }}"></script>
+
         <title>
             Diary
         </title>
@@ -13,15 +16,40 @@
         <p>
             This "diary" shall populate the diary on medidata<br>
             Enter in "abc" for subject key:<br>
-            <form action="/hello" method="post">
-                Subject Key: <input type="text" name="first_name"> <br />
-                 <p> Date Diary was logged: <input type="date" name="date"><br /> </p>
-                <p>Time diary was logged: <input type="time" name="time"><br /> </p>
-                <!-- <button type="button" onclick="document.getElementById('demo').innerHTML = Date()">
-                  Click me to display Date and Time.</button> -->
-                <p>How Severe is your pain: <input type="number" name="pain"></p>
-                <p>Was your pain expected?: <input type="number" name="expected"></p>
-                <p style="padding-left:1em">Which activities triggered your pain:</p>
+            <form action="/hello" method="POST">
+                Subject Key:
+                <input type="text" name="key">
+                <br/>
+                
+                <p>
+                  <label for="date-log">
+                    Date Diary was logged:
+                  </label>
+                  <input type="date" id="today">
+                  <br/>
+                </p>
+
+                <p>
+                  Time diary was logged:
+                  <input type="time" id="time-now" name="time">
+                  <button type="button" onclick="getTimeNow()" name="currTime">
+                    Current time
+                  </button>
+                  <br/>
+                </p>
+
+                <p>How Severe is your pain:
+                  <input type="number" name="pain">
+                </p>
+
+                <p>Was your pain expected?:
+                  <input type="number" name="expected">
+                </p>
+
+                <p style="padding-left:1em">
+                  Which activities triggered your pain:
+                </p>
+
                 <label style="padding-left:1em">
                   <input type="checkbox" name="check" value="work"> Work
                   <input type="checkbox" name="check" value="exercise"> exercise
@@ -30,11 +58,34 @@
                   <input type="checkbox" name="check" value="steps"> Climbing Steps
                   <input type="checkbox" name="check" value="none"> None of the Above
               </label>
-              <br / >
-              <br / >
+
+              <br/>
+              <br/>
 
                 <input type="submit" name= "form" value="Submit" />
+                <input type="submit" name= "refresh" value="Refresh" />
             </form>
         </p>
     </body>
 </html>
+
+<div id="time">Time: </div>
+
+<script>
+
+
+function getTimeNow(){
+    var today = moment().format('YYYY-MM-D')
+    var now = moment().format('hh:mm');
+
+    // document.write(today);
+    document.querySelector("#today").value = today;
+    document.querySelector("#time-now").value = now;
+    var i = document.createElement("img");
+    "/getTime?time=" + time;
+}
+
+function getSubject(){
+    i.src = "/getSubject?key=" + document.querySelector("#key").value;
+}
+</script>
