@@ -16,21 +16,20 @@
         <p>
             This "diary" shall populate the diary on medidata<br>
             Enter in "abc" for subject key:<br>
-            <form action="/hello" method="POST">
+            <form action="/getSubject" method="POST">
                 Subject Key:
-                <input type="text" name="key">
+                <input type="text" name="key" required>
                 <br/>
-                
+
                 <p>
                   <label for="date-log">
                     Date Diary was logged:
                   </label>
-                  <input type="date" id="today">
+                  <input type="date" name="today" id="today">
                   <br/>
                 </p>
 
-                <p>
-                  Time diary was logged:
+                <p> Time diary was logged:
                   <input type="time" id="time-now" name="time">
                   <button type="button" onclick="getTimeNow()" name="currTime">
                     Current time
@@ -69,11 +68,8 @@
     </body>
 </html>
 
-<div id="time">Time: </div>
 
 <script>
-
-
 function getTimeNow(){
     var today = moment().format('YYYY-MM-D')
     var now = moment().format('hh:mm');
@@ -81,11 +77,7 @@ function getTimeNow(){
     // document.write(today);
     document.querySelector("#today").value = today;
     document.querySelector("#time-now").value = now;
-    var i = document.createElement("img");
-    "/getTime?time=" + time;
-}
-
-function getSubject(){
-    i.src = "/getSubject?key=" + document.querySelector("#key").value;
+    // var i = document.createElement("img");
+    // "/getTime?time=" + time;
 }
 </script>
