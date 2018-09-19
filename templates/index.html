@@ -5,12 +5,12 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
       <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
-      <link rel="stylesheet" type="text/css" href="../static/style.css">
-
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
       <script type="text/javascript" src="{{ url_for('static', filename='moment.min.js') }}">
       </script>
 
@@ -20,33 +20,140 @@
       </title>
     </head>
     <body>
-        <h3>
-            Diary Example
-        </h3>
-        <p>
-            This "diary" shall populate the diary on medidata<br>
-            Enter in "abc" for subject key:<br>
-            <form action="/getSubject" method="POST">
-                Subject Key:
-                <input type="text" name="key" required>
-                <br/>
+      <div class="container border-secondary">
+        <div class="row">
+          <div class="col-xs-12 center-block text-center diary-heading">
+            <h1 class="text-center">Diary</h1>
+          </div>
+        </div>
+        <form action="/getSubject" method="POST">
+          <div class="row form-group">
+            <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="firstname"  class="control-label">Subject Key</label>
+              </div>
+              <div class="col-lg-3">
+                <input type="text" class="form-control"  name="key" placeholder="Subject Key">
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
 
-                <p>
-                  <label for="date-log">
-                    Date Diary was logged:
-                  </label>
-                  <input type="date" name="today" id="today">
-                  <br/>
-                </p>
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="firstname" class="control-label">Date</label>
+              </div>
+              <div class="col-lg-3">
+                <input class="form-control" type="date" name="today" id="today">
+              </div>
+              <div class="col-lg-3">
+                <button class=" time-now-btn" type="button" onclick="getTimeNow()" name="currTime">
+                  Current time
+                </button>
+              </div>
+          </div>
 
-                <p> Time diary was logged:
-                  <input type="time" id="time-now" name="time">
-                  <button type="button" onclick="getTimeNow()" name="currTime">
-                    Current time
-                  </button>
-                  <br/>
-                </p>
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="firstname" class="control-label">Time</label>
+              </div>
+              <div class="col-lg-3">
+                <input class="col-lg-5" type="time" id="time-now" name="time">
+                <!-- <div class="col-lg-2"></div>
+                <button class="col-lg-5 time-now-btn" type="button" onclick="getTimeNow()" name="currTime">
+                  Current time
+                </button> -->
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
 
+          <div class="row form-group">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+              <label for="pain" class="control-label">How Severe is your pain:</label>
+            </div>
+            <div class="col-lg-3" data-toggle="buttons">
+              <label class="btn btn-1 btn-primary">
+                <input type="radio" name="options" id="option1" autocomplete="off"> 1
+              </label>
+              <label class="btn btn-2 btn-primary">
+                <input type="radio" name="options" id="option2" autocomplete="off"> 2
+              </label>
+              <label class="btn btn-3 btn-primary">
+                <input type="radio" name="options" id="option3" autocomplete="off"> 3
+              </label>
+              <label class="btn btn-4 btn-primary">
+                <input type="radio" name="options" id="option4" autocomplete="off"> 4
+              </label>
+              <label class="btn btn-5 btn-primary">
+                <input type="radio" name="options" id="option5" autocomplete="off"> 5
+              </label>
+            </div>
+            <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+              <label for="pain" class="control-label">Is this pain expected?</label>
+            </div>
+            <div class="col-lg-3" data-toggle="buttons">
+              <label class="btn btn-2 btn-primary">
+                <input type="radio" name="expected" value="Y" id="option1" autocomplete="off"> Yes
+              </label>
+              <label class="btn btn-2 btn-primary">
+                <input type="radio" name="expected" value="N" id="option2" autocomplete="off"> No
+              </label>
+            </div>
+            <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group" id="pain-activites">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+              <label for="pain" class="control-label">Which activies triggered the pain</label>
+            </div>
+            <div class="col-lg-3" data-toggle="buttons">
+              <div class="checkbox">
+                <label><input type="checkbox" value="">Work</label>
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" value="">Exercise</label>
+              </div>
+              <div class="checkbox disabled">
+                <label><input type="checkbox" value="">Walking</label>
+              </div>
+              <div class="checkbox disabled">
+                <label><input type="checkbox" value="">Sitting</label>
+              </div>
+              <div class="checkbox disabled">
+                <label><input type="checkbox" value="">Climbing</label>
+              </div>
+            </div>
+            <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                Comments
+              </div>
+              <div class="col-lg-3">
+                  <textarea class="form-control"></textarea>
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
+
+          <div class="form-actions">
+            <div class="col-lg-3"></div>
+            <button type="submit" class="btn btn-lg btn-block btn-submit">Submit</button>
+            <div class="col-lg-3"></div>
+          </div>
+        </form>
+      </div>
+
+            <!-- <form action="/getSubject" method="POST">
                 <p>How Severe is your pain:
                   <input type="number" name="pain">
                 </p>
@@ -74,7 +181,7 @@
                 <input type="submit" name= "form" value="Submit" />
                 <input type="submit" name= "refresh" value="Refresh" />
             </form>
-        </p>
+        </p> -->
     </body>
 </html>
 
