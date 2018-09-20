@@ -69,7 +69,7 @@ input[type="time"] {
 .btn-submit {
     margin: 5% 25% 10% 25%;
     text-align: center;
-
+    width: 50%;
     background-color: #f4511e;
     border: none;
     color: white;
