@@ -1,0 +1,88 @@
+p {
+    font-family: verdana;
+    font-size: 20px;
+}
+h2 {
+    color: navy;
+    margin-left: 20px;
+    text-align: center;
+}
+
+.container{
+    margin: 0 auto;
+    background-color: #dedede;
+    border: #e32;
+}
+
+.time-now-btn{
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 0px;
+    color: white;
+    background-color: #65afa5;
+    vertical-align: middle;
+    border-radius: 3px;
+}
+
+
+@media (min-width: 992px)
+.time-now-btn{
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+input[type="time"] {
+  line-height: 75%;
+  -webkit-appearance: textfield;
+  padding-right: 5px
+}
+
+.rad-btns{
+  display: flex;
+}
+
+.btn-1{
+  background-color: #42ca7f;
+  border-color: #2a9259;
+}
+
+.btn-2{
+  background-color: #428bca;
+  border-color: #357ebd;
+}
+
+.btn-3{
+  background-color: #c8ca42;
+  border-color: #9fa036;
+}
+
+.btn-4{
+  background-color: #e89731;
+  border-color: #b17325;
+}
+
+.btn-5{
+  background-color: #e83131;
+  border-color: #941717;
+}
+
+.btn-submit {
+    margin: 5% 25% 10% 25%;
+    text-align: center;
+    width: 50%;
+    background-color: #f4511e;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    font-size: 16px;
+    /* margin: 4px 2px 20px 2px; */
+    opacity: 0.6;
+    transition: 0.3s;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.diary-heading{
+  padding-bottom: 20px;
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+      <script type="text/javascript" src="{{ url_for('static', filename='moment.min.js') }}">
+      </script>
+
+
+      <title>
+          Diary
+      </title>
+    </head>
+    <body>
+      <div class="container border-secondary">
+        <div class="row">
+          <div class="col-xs-12 center-block text-center diary-heading">
+            <h1 class="text-center">Diary</h1>
+          </div>
+        </div>
+        <form action="/editDiary" method="POST">
+          <div class="row form-group">
+            <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="firstname"  class="control-label">Subject Key</label>
+              </div>
+              <div class="col-lg-3">
+                <input type="text" class="form-control"  name="key" placeholder="Subject Key" required>
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="firstname" class="control-label">Date</label>
+              </div>
+              <div class="col-lg-3">
+                <input class="form-control" type="date" name="today" id="today">
+              </div>
+              <div class="col-lg-3">
+                <button class=" time-now-btn" type="button" onclick="getTimeNow()" name="currTime">
+                  Current time
+                </button>
+              </div>
+          </div>
+
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="firstname" class="control-label">Time</label>
+              </div>
+              <div class="col-lg-3">
+                <input type="time" id="time-now" name="time">
+                <!-- <div class="col-lg-2"></div>
+                <button class="col-lg-5 time-now-btn" type="button" onclick="getTimeNow()" name="currTime">
+                  Current time
+                </button> -->
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                <label for="visit-num" class="control-label">Visit #</label>
+              </div>
+              <div class="col-lg-3">
+                <select id="visit" name="visit_num">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+              <label for="pain" class="control-label">How Severe is your pain:</label>
+            </div>
+            <div class="col-lg-3" data-toggle="buttons">
+              <label class="btn btn-1 btn-primary">
+                <input type="radio" name="options" id="option1" autocomplete="off"> 1
+              </label>
+              <label class="btn btn-2 btn-primary">
+                <input type="radio" name="options" id="option2" autocomplete="off"> 2
+              </label>
+              <label class="btn btn-3 btn-primary">
+                <input type="radio" name="options" id="option3" autocomplete="off"> 3
+              </label>
+              <label class="btn btn-4 btn-primary">
+                <input type="radio" name="options" id="option4" autocomplete="off"> 4
+              </label>
+              <label class="btn btn-5 btn-primary">
+                <input type="radio" name="options" id="option5" autocomplete="off"> 5
+              </label>
+            </div>
+            <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+              <label for="pain" class="control-label">Is this pain expected?</label>
+            </div>
+            <div class="col-lg-3" data-toggle="buttons">
+              <label class="btn btn-2 btn-primary">
+                <input type="radio" name="expected" value="Y" id="option1" autocomplete="off"> Yes
+              </label>
+              <label class="btn btn-2 btn-primary">
+                <input type="radio" name="expected" value="N" id="option2" autocomplete="off"> No
+              </label>
+            </div>
+            <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group" id="pain-activites">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3">
+              <label for="pain" class="control-label">Which activies triggered the pain</label>
+            </div>
+            <div class="col-lg-3" data-toggle="buttons">
+              <div class="checkbox">
+                <label><input type="checkbox" value="">Work</label>
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" value="">Exercise</label>
+              </div>
+              <div class="checkbox disabled">
+                <label><input type="checkbox" value="">Walking</label>
+              </div>
+              <div class="checkbox disabled">
+                <label><input type="checkbox" value="">Sitting</label>
+              </div>
+              <div class="checkbox disabled">
+                <label><input type="checkbox" value="">Climbing</label>
+              </div>
+            </div>
+            <div class="col-lg-3"></div>
+          </div>
+
+          <div class="row form-group">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3">
+                Comments
+              </div>
+              <div class="col-lg-3">
+                  <textarea class="form-control"></textarea>
+              </div>
+              <div class="col-lg-3"></div>
+          </div>
+
+          <div class="form-actions">
+
+            <button type="submit" class="btn center-block btn-lg btn-block btn-submit">Submit</button>
+
+          </div>
+        </form>
+      </div>
+    </body>
+</html>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+function getTimeNow(){
+    var today = moment().format('YYYY-MM-D')
+    var now = moment().format('hh:mm');
+
+    // document.write(today);
+    document.querySelector("#today").value = today;
+    document.querySelector("#time-now").value = now;
+    // var i = document.createElement("img");
+    // "/getTime?time=" + time;
+}
+</script>

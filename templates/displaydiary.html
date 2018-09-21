@@ -1,0 +1,65 @@
+
+<table class="centered thick-border">
+        <tr>
+                <th>Field</th>
+                <th>Info</th>
+        </tr>
+        {% set cnt = [1] %}
+        {% for child in root %}
+          <tr>
+            {% for k, v in child.attrib.items() %}
+              <!-- <td>{{ k }}</td> -->
+              {% if "DATE" in v %}
+                </tr>
+                <tr>
+                  <th>Visit</th>
+                  <th>{{cnt[0]}}</th>
+                  {% if cnt.append(cnt.pop() + 1) %}{% endif %}
+                </tr>
+                <tr>
+              {% endif %}
+
+              {% if k == "IsNull" and v=='Yes'%}
+                <td>{{"Null"}}</td>
+              {%else%}
+                <td>{{ v }}</td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+</table>
+
+<!-- <span id="num"></span>
+<span id="street"></span>
+<br />
+<span id="city"></span>,
+<span id="state"></span>
+<span id="zip"></span> -->
+
+
+<!-- <script>
+
+txt = "<ClinicalData StudyOID=\"Mediiflex(Dev)\" MetaDataVersionOID=\"1015\"><SubjectData SubjectKey=\"3\"><SiteRef LocationOID=\"BWH0001\" /><StudyEventData StudyEventOID=\"SUBJECT\"><FormData FormOID=\"EN\" FormRepeatKey=\"1\"><ItemGroupData ItemGroupOID=\"EN_LOG_LINE\"><ItemData ItemOID=\"EN.SUBJINIT\" Value=\"ABC\" /><ItemData ItemOID=\"EN.SUBJID\" Value=\"3\" /><ItemData ItemOID=\"EN.USUBJID\" IsNull=\"Yes\" /></ItemGroupData></FormData></StudyEventData></SubjectData></ClinicalData>";
+
+if (window.DOMParser) {
+  parser = new DOMParser();
+  xmlDoc = parser.parseFromString(txt, "text/xml");
+} else // Internet Explorer
+{
+  xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+  xmlDoc.async = false;
+  xmlDoc.loadXML(txt);
+}
+
+document.getElementById("num").innerHTML =
+  xmlDoc.getElementsByTagName("ClinicalData")[0].getAttribute('StudyOID');
+document.getElementById("street").innerHTML =
+  xmlDoc.getElementsByTagName("street")[0].childNodes[0].nodeValue;
+document.getElementById("city").innerHTML =
+  xmlDoc.getElementsByTagName("adminName2")[0].childNodes[0].nodeValue;
+document.getElementById("state").innerHTML =
+  xmlDoc.getElementsByTagName("adminCode1")[0].childNodes[0].nodeValue;
+document.getElementById("zip").innerHTML =
+  xmlDoc.getElementsByTagName("postalcode")[0].childNodes[0].nodeValue;
+
+</script> -->
