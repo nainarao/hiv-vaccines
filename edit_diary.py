@@ -22,7 +22,7 @@ def editDiary():
     s = dt.strftime("%d %b %Y")
     tm = request.form['time']
     print tm
-    dev_diary.updateSubjectDiary(sub_key, s, 1)
+    dev_diary.updateSubjectDiary(sub_key, s, 1, request.form)
     print "TODAY DATE: ", request.form['today'], s
     sub_xml = dev_diary.printPatient(sub_key)
     return render_template('displaydiary.html', root=sub_xml)

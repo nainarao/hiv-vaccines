@@ -194,7 +194,7 @@ def setSubjectDiary(sub_id, entry_date):
     print "Addition Successful: ", resp.istransactionsuccessful
     print "Fields Changed: \n", str(resp)
 
-def updateSubjectDiary(sub_id, entry_date, vst):
+def updateSubjectDiary(sub_id, entry_date, vst, diary_form):
 
     print "make ODM: "
     # Make a root ODM element with originator system
@@ -217,6 +217,7 @@ def updateSubjectDiary(sub_id, entry_date, vst):
 
     # Push itemdata elements into the itemgroup
     itemgroup << ItemData("IT_DATE",entry_date)
+    itemgroup << ItemData("IT_TIME", diary_form['time']+":00")
     #itemgroup << ItemData("SUBJID",001)
     # itemgroup << ItemData("USUBJID", "xxx")
 
@@ -227,11 +228,18 @@ def updateSubjectDiary(sub_id, entry_date, vst):
     root = odm.getroot()
 
     # Print a string representation of the ODM document
-    print(str(odm))
+    #print(str(odm))
 
     resp = rws.send_request(PostDataRequest(str(odm)))
-    print "Addition Successful: ", resp.istransactionsuccessful
-    print "Fields Changed: \n", str(resp)
+
+    print diary_form['time']
+
+    if  resp.istransactionsuccessful:
+
+    #print "Addition Successful: ", resp.istransactionsuccessful
+        print "Fields Changed: \n", str(resp)
+    else:
+        print "you fucked something up you poopie Mcpoop face. "
 
 def makeODM():
     print "make ODM: "
