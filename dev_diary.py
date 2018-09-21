@@ -1,6 +1,3 @@
-__author__ = 'naina'
-
-from flask import Flask, render_template, request
 import sys
 from rwslib import RWSConnection
 from rwslib.builders import *
@@ -156,7 +153,7 @@ def addNewSubject1():
     print "Addition Successful: ", resp.istransactionsuccessful
     print "Fields Changed: \n", str(resp)
 
-def updateSubjectDiary(sub_id, entry_date):
+def setSubjectDiary(sub_id, entry_date):
 
     data = """<?xml version="1.0" encoding="utf-8" ?> <ODM xmlns="http://www.cdisc.org/ns/odm/v1.3" ODMVersion="1.3" FileType="Transactional" FileOID="Example-7" CreationDateTime="2008-01-01T00:00:00">
  <ClinicalData StudyOID="Mediflex(Dev)" MetaDataVersionOID="1">
@@ -172,21 +169,67 @@ def updateSubjectDiary(sub_id, entry_date):
          </ItemGroupData>
        </FormData>
      </StudyEventData>
-     <StudyEventData StudyEventOID="VISIT02">
-       <FormData FormOID="FORM_PAIN_SI">
-         <ItemGroupData ItemGroupOID="FORM_PAIN_SI_LOG_LINE" ItemGroupRepeatKey="1">
-           <ItemData ItemOID="IT_DATE" Value="7 Feb 2011"/>
-           <ItemData ItemOID="IT_TIME" Value="18:00:00"/>
-           <ItemData ItemOID="IT_SEVERE" Value="75"/>
-           <ItemData ItemOID="IT_REC_ID" Value="12345679"/>
-         </ItemGroupData>
-       </FormData>
-     </StudyEventData>
    </SubjectData>
  </ClinicalData>
 </ODM>"""
+
+    data = """<?xml version="1.0" encoding="utf-8" ?>
+<ODM CreationDateTime="2018-09-21T15:48:35" FileOID="fb010a03-30de-4c6f-8f31-08e82d3526ab" FileType="Transactional" Granularity="AllClinicalData" ODMVersion="1.3" Originator="test system" xmlns="http://www.cdisc.org/ns/odm/v1.3" xmlns:mdsol="http://www.mdsol.com/ns/odm/metadata">
+  <ClinicalData MetaDataVersionOID="1" StudyOID="Mediflex (DEV)">
+    <SubjectData SubjectKey="1" TransactionType="Update" mdsol:SubjectKeyType="SubjectName">
+      <SiteRef LocationOID="BWH0001" />
+      <StudyEventData StudyEventOID="VISIT01" TransactionType="Update">
+        <FormData FormOID="FORM_PAIN_SI" TransactionType="Update">
+          <ItemGroupData ItemGroupOID="FORM_PAIN_SI_LOG_LINE" ItemGroupRepeatKey="1">
+            <ItemData ItemOID="IT_DATE" Value="21 Sep 2018" />
+          </ItemGroupData>
+        </FormData>
+      </StudyEventData>
+    </SubjectData>
+  </ClinicalData>
+</ODM>"""
+
     print data
     resp = rws.send_request(PostDataRequest(data))
+    print "Addition Successful: ", resp.istransactionsuccessful
+    print "Fields Changed: \n", str(resp)
+
+def updateSubjectDiary(sub_id, entry_date, vst):
+
+    print "make ODM: "
+    # Make a root ODM element with originator system
+    odm = ODM("test system")
+
+    # Study and environment
+    clinical_data = ClinicalData("Mediflex", "DEV")
+
+    # Subject Site, Subject Name and the transaction type
+    subject_data = SubjectData(site_location_oid=location_oid, subject_key=sub_id, transaction_type="Update")
+
+    # The special "SUBJECT" event represents subject-level forms
+    event_data = StudyEventData("VISIT0" + str(vst))
+
+    # We want to update this form that will be created automatically when subject created
+    form_data = FormData("FORM_PAIN_SI", transaction_type="Update")
+
+    # We need an ItemGroupData element
+    itemgroup = ItemGroupData("FORM_PAIN_SI_LOG_LINE", "Update", "1")
+
+    # Push itemdata elements into the itemgroup
+    itemgroup << ItemData("IT_DATE",entry_date)
+    #itemgroup << ItemData("SUBJID",001)
+    # itemgroup << ItemData("USUBJID", "xxx")
+
+    # Now we put it all together
+    odm << clinical_data << subject_data << event_data << form_data << itemgroup
+
+    # Get an lxml document from the ODM object for further manipulation
+    root = odm.getroot()
+
+    # Print a string representation of the ODM document
+    print(str(odm))
+
+    resp = rws.send_request(PostDataRequest(str(odm)))
     print "Addition Successful: ", resp.istransactionsuccessful
     print "Fields Changed: \n", str(resp)
 
@@ -242,34 +285,3 @@ if len(sys.argv) > 1:
     printSubjectData(sys.argv[1])
     #removeSubject(sys.argv[1])
 #printAllSubjects()
-
-app = Flask(__name__)
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/getSubject', methods=['POST'])
-def getSubject():
-    initialize_medidata()
-    sub_key = request.form['key']
-    dt = request.form['today']
-    dt = datetime.strptime(dt,'%Y-%m-%d')
-    s = dt.strftime("%d %b %Y")
-    updateSubjectDiary(sub_key, s)
-    print "TODAY DATE: ", request.form['today'], s
-    sub_xml = printPatient(sub_key)
-    return render_template('displaydiary.html', root=sub_xml)
-    #return 'Hello have fun learning python <br/> <xmp> %s </xmp> <a href="/">Back Home</a>' % (str(sub_xml))
-
-@app.route('/hello', methods=['POST'])
-def hello():
-    initialize_medidata()
-    first_name = request.form['key']
-    sub_xml = printPatient(first_name)
-    print sub_xml
-    #sub_xml = sub_xml.replace("\"", "\\""s")
-    return render_template('displaydiary.html', root=sub_xml)
-    #return 'Hello have fun learning python <br/> <xmp> %s </xmp> <a href="/">Back Home</a>' % (str(sub_xml))
