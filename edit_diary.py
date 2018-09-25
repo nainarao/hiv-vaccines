@@ -51,3 +51,7 @@ def hello():
     #sub_xml = sub_xml.replace("\"", "\\""s")
     return render_template('displaydiary.html', root=sub_xml)
     #return 'Hello have fun learning python <br/> <xmp> %s </xmp> <a href="/">Back Home</a>' % (str(sub_xml))
+
+
+if __name__ == "__main__":
+    app.run()
